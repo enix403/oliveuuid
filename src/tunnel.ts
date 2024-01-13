@@ -1,4 +1,4 @@
-import wasmUrl from '@wasmcore/pkg/oliveuuid_bg.wasm?url';
+import wasmUrl from '@wasmcore/pkg/generated_bg.wasm?url';
 import * as wasmModule from '@wasmcore/pkg';
 
 type ModuleExports = typeof wasmModule;
