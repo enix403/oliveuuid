@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Mona Sans";
+  src: url("/Mona-Sans.woff2") format("woff2 supports variations"),
+    url("/Mona-Sans.woff2") format("woff2-variations");
+  font-weight: 200 900;
+  font-stretch: 75% 125%;
+}
+
+html {
+  font-size: 14px;
+}
+
+html,
+body {
+  height: 100%;
+  min-height: 100%;
+  width: 100%;
+  min-width: 100%;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  /* font-family: "Inter", sans-serif; */
+  font-family: "Mona Sans";
+
+  /* color: #000; */
+  /* background-color: #f8f7f4; */
+}
+
+#root {
+  isolation: isolate;
+
+  max-width: 100%;
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+}
+
+input,
+textarea,
+select,
+button {
+  outline: none !important;
+}
