@@ -1,63 +1,76 @@
 import { wasmCore } from "@/tunnel";
-import { AddShoppingCart, Alarm, Delete, Send } from "@mui/icons-material";
-import { Button, IconButton, Slider } from "@mui/material";
-import { useEffect } from "react";
+import {
+  Button,
+  Container,
+  FormControl,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Tab,
+  Tabs,
+  Typography,
+} from "@mui/material";
+import Box from "@mui/material/Box";
 
-export function Home() {
-  useEffect(() => {
-    // console.log("Why hehhe");
-    let uuid = wasmCore.create_uuid();
-    let details = wasmCore.get_details(uuid);
+import { useEffect, useState } from "react";
 
-    console.log(details.clock_seq);
-  }, []);
+function GenerateView() {
+  const [version, setVersion] = useState<string>("1");
+
+  const handleVersionChange = (event: SelectChangeEvent) => {
+    setVersion(event.target.value);
+  };
+
   return (
     <>
-      <div className="flex flex-col items-start gap-y-6 p-8">
-        <h1>Hello</h1>
-        <Button color="primary" variant="contained">
-          Hello
-        </Button>
-        <Button color="secondary" variant="contained">
-          Hello
-        </Button>
-        <Button color="success" variant="contained">
-          Hello
-        </Button>
-        <Button color="error" variant="contained">
-          Hello
-        </Button>
-        <Button color="warning" variant="contained">
-          Hello
-        </Button>
-        <Button variant="outlined" startIcon={<Delete />}>
-          Delete
-        </Button>
-        <Button variant="contained" endIcon={<Send />}>
-          Send
-        </Button>
-        <div className="flex gap-x-6">
-          <IconButton color="error" aria-label="delete">
-            <Delete />
-          </IconButton>
-          <IconButton aria-label="delete" disabled color="primary">
-            <Delete />
-          </IconButton>
-          <IconButton color="secondary" aria-label="add an alarm">
-            <Alarm />
-          </IconButton>
-          <IconButton color="primary" aria-label="add to shopping cart">
-            <AddShoppingCart />
-          </IconButton>
-        </div>
-        <Slider
-          defaultValue={30}
-          sx={{
-            width: 300,
-            color: "error.main",
-          }}
-        />
-      </div>
+      <Typography variant="h6" sx={{ marginBottom: 2 }}>
+        Generate UUID
+      </Typography>
+      <FormControl>
+        <InputLabel>Version</InputLabel>
+        <Select
+          label="Version"
+          value={version}
+          onChange={handleVersionChange}
+        >
+          <MenuItem value={1}>V1 (Node and Time Based)</MenuItem>
+          <MenuItem value={3}>V3 (MD5 Hashed Bashed)</MenuItem>
+          <MenuItem value={4}>V4 (Random)</MenuItem>
+          <MenuItem value={5}>V5 (SHA1 Hashed Bashed)</MenuItem>
+        </Select>
+      </FormControl>
+    </>
+  );
+}
+
+function DecodeView() {
+  return (
+    <>
+      <Typography variant="h6">Decode UUID</Typography>
+    </>
+  );
+}
+
+export function Home() {
+  const [activeTab, setActiveTab] = useState(0);
+
+  const handleChange = (_event, tab: number) => {
+    setActiveTab(tab);
+  };
+
+  return (
+    <>
+      <Box sx={{ width: "100%", bgcolor: "background.paper" }}>
+        <Tabs value={activeTab} onChange={handleChange} centered>
+          <Tab label="Generate" />
+          <Tab label="Decode" />
+        </Tabs>
+      </Box>
+      <Box sx={{ padding: 4 }}>
+        {activeTab === 0 ? <GenerateView /> : <DecodeView />}
+      </Box>
     </>
   );
 }
