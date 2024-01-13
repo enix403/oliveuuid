@@ -12,14 +12,25 @@ import {
   Typography,
 } from "@mui/material";
 import Box from "@mui/material/Box";
-import { useState } from "react";
+import { useState, useCallback } from "react";
+
+import { wasmCore } from '@/tunnel';
 
 export function GenerateView() {
   const [version, setVersion] = useState<string>("");
 
+  const [uuid, setUuid] = useState<wasmCore.PartedUuid | null>(null);
+  const [uuidStr, setUuidStr] = useState<string>("");
+
   const handleVersionChange = (event: SelectChangeEvent) => {
     setVersion(event.target.value);
   };
+
+  const handleGenerate = useCallback(() => {
+    let uuid = wasmCore.create_uuid();
+    setUuidStr(wasmCore.format_uuid(uuid));
+    setUuid(uuid);
+  }, []);
 
   let versionInt = +version;
   let isVersionValid =
@@ -65,12 +76,17 @@ export function GenerateView() {
       </Box>
 
       {isVersionValid && (
-        <Button color="primary" variant="contained" sx={{ marginBottom: 2 }}>
+        <Button
+          color="primary"
+          variant="contained"
+          sx={{ marginBottom: 2 }}
+          onClick={handleGenerate}
+        >
           Generate
         </Button>
       )}
 
-      <Box
+      {uuid && <Box
         sx={{
           width: "100%",
           bgcolor: "success.500",
@@ -84,7 +100,8 @@ export function GenerateView() {
         <div className="grid grid-cols-[1fr_auto] grid-rows-1">
           <div className="col-[1/-1] row-[1/2] flex items-center justify-center">
             <Typography variant="h4" fontFamily="Fira Code" fontWeight={700}>
-              ffb82219-2be8-4961-8c83-2163e1b4b966
+              {/*ffb82219-2be8-4961-8c83-2163e1b4b966*/}
+              {uuidStr}
             </Typography>
           </div>
           <div className="col-[2/3] row-[1/2] flex items-center justify-center">
@@ -95,7 +112,7 @@ export function GenerateView() {
             </Tooltip>
           </div>
         </div>
-      </Box>
+      </Box>}
     </>
   );
 }

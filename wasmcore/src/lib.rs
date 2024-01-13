@@ -39,3 +39,8 @@ pub fn create_uuid() -> PartedUuid {
 pub fn get_details(p_uuid: PartedUuid) -> UuidDetails {
     p_uuid.into_uuid().details()
 }
+
+#[wasm_bindgen]
+pub fn format_uuid(p_uuid: PartedUuid) -> String {
+    p_uuid.into_uuid().to_string_hex()
+}

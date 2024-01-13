@@ -1,11 +1,13 @@
 import wasmUrl from '@wasmcore/pkg/generated_bg.wasm?url';
+
+export * as wasmCore from '@wasmcore/pkg';
 import * as wasmModule from '@wasmcore/pkg';
 
-type ModuleExports = typeof wasmModule;
-export type CoreApi = Omit<ModuleExports, 'initSync' | 'default'>;
+// type ModuleExports = typeof wasmModule;
+// export type CoreApi = Omit<ModuleExports, 'initSync' | 'default'>;
 
 let init = wasmModule.default;
-export let wasmCore: CoreApi = { ...wasmModule };
+// export let wasmCore: CoreApi = { ...wasmModule };
 
 let _isLoaded = false;
 
