@@ -464,6 +464,11 @@
   resolved "https://registry.yarnpkg.com/@floating-ui/utils/-/utils-0.2.1.tgz#16308cea045f0fc777b6ff20a9f25474dd8293d2"
   integrity sha512-9TANp6GPoMtYzQdt54kfAyMmz1+osLlXdg2ENroU7zzrtflTLrrC/lgrIfaSe+Wu0b89GKccT7vxXA0MoAIO+Q==
 
+"@fontsource/fira-code@^5.0.16":
+  version "5.0.16"
+  resolved "https://registry.yarnpkg.com/@fontsource/fira-code/-/fira-code-5.0.16.tgz#a85f1836ddc38b6ea81feeade110d7ae31f0bc6d"
+  integrity sha512-mOAs/sgZz+ETOB4foFnOnbewQDJpByvR4h/pLmgkWVn/gbA8Tlb4wUSWK4QFc+SKmHaDJsT/wgWjDUcxssZn7w==
+
 "@fontsource/inter@^5.0.8":
   version "5.0.16"
   resolved "https://registry.yarnpkg.com/@fontsource/inter/-/inter-5.0.16.tgz#b858508cdb56dcbbf3166903122851e2fbd16b50"

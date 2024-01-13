@@ -6,7 +6,7 @@ export const theme = createTheme({
     mode: "dark",
     background: {
       default: "#101418",
-      paper: "rgba(20, 26, 31, 0.8)",
+      paper: "rgba(20, 26, 31)",
     },
     primary: {
       main: "#90CAF9",
@@ -21,6 +21,9 @@ export const theme = createTheme({
     },
     success: {
       main: "#66BB6A",
+      // "500": "#112920",
+      "500": "rgba(26, 162, 81, 0.15)",
+      "600": "rgba(29, 180, 90, 0.3)"
     },
     warning: {
       main: "#FFA726",
