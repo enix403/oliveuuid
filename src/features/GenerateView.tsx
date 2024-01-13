@@ -1,11 +1,14 @@
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import {
   Alert,
   Button,
   FormControl,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
   SelectChangeEvent,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import Box from "@mui/material/Box";
@@ -77,11 +80,21 @@ export function GenerateView() {
           border: 1,
           borderColor: "success.600",
         }}
-        className="flex items-center justify-center"
       >
-        <Typography variant="h4" fontFamily="Fira Code" fontWeight={700}>
-          ffb82219-2be8-4961-8c83-2163e1b4b966
-        </Typography>
+        <div className="grid grid-cols-[1fr_auto] grid-rows-1">
+          <div className="col-[1/-1] row-[1/2] flex items-center justify-center">
+            <Typography variant="h4" fontFamily="Fira Code" fontWeight={700}>
+              ffb82219-2be8-4961-8c83-2163e1b4b966
+            </Typography>
+          </div>
+          <div className="col-[2/3] row-[1/2] flex items-center justify-center">
+            <Tooltip title="Copy to Clipboard">
+              <IconButton>
+                <ContentCopyIcon />
+              </IconButton>
+            </Tooltip>
+          </div>
+        </div>
       </Box>
     </>
   );
