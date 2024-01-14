@@ -22,7 +22,11 @@ export function GenerateView() {
   const [nsType, setNsType] = useState<"custom" | "wellknown">("custom");
 
   const [wellknowns, setWellknowns] = useState<wasmCore.WellKnownUuid[]>([]);
+
+  const [namespace, setNamespace] = useState<string>("");
   const [wellknownUuid, setWellknownUuid] = useState<string>("");
+
+  const [name, setName] = useState<string>("");
 
   const [uuid, setUuid] = useState<wasmCore.PartedUuid | null>(null);
   const [uuidStr, setUuidStr] = useState<string>("");
@@ -36,8 +40,7 @@ export function GenerateView() {
   useEffect(() => {
     let ll = wasmCore.wellknown_list();
     setWellknowns(ll);
-    if (ll.length > 0)
-      setWellknownUuid(ll[0].name)
+    if (ll.length > 0) setWellknownUuid(ll[0].name);
   }, []);
 
   let versionInt = +version;
@@ -54,7 +57,7 @@ export function GenerateView() {
       <Typography variant="h5" sx={{ marginBottom: 2 }}>
         Generate UUID
       </Typography>
-      <Box sx={{ width: 250, marginBottom: 2 }}>
+      <div className="mb-2 md:max-w-[250px]">
         <FormControl fullWidth>
           <InputLabel id="demo-simple-select-label">Version</InputLabel>
           <Select
@@ -80,7 +83,7 @@ export function GenerateView() {
             </MenuItem>
           </Select>
         </FormControl>
-      </Box>
+      </div>
 
       {hashBased && (
         <>
@@ -92,7 +95,7 @@ export function GenerateView() {
             Namespace
           </Typography>
 
-          <Box className="flex items-start gap-4" sx={{ mb: 0.5 }}>
+          <div className="mb-0.5 flex flex-col items-start gap-4 md:flex-row">
             <FormControl className="shrink-0">
               <InputLabel>Input Type</InputLabel>
               <Select
@@ -104,7 +107,7 @@ export function GenerateView() {
                 <MenuItem value="wellknown">Well Known</MenuItem>
               </Select>
             </FormControl>
-            <Box sx={{ width: 450 }}>
+            <div className="w-full md:max-w-[450px]">
               {nsType === "custom" ? (
                 <TextField
                   label="Namespace"
@@ -112,6 +115,8 @@ export function GenerateView() {
                   // helperText="The namespace UUID. Enter your custom UUID, or choose a wellknown UUID"
                   InputProps={{ className: "!font-['Fira_Code'] !font-medium" }}
                   fullWidth
+                  value={namespace}
+                  onChange={(event) => setNamespace(event.target.value)}
                 />
               ) : (
                 <Select
@@ -126,14 +131,30 @@ export function GenerateView() {
                   ))}
                 </Select>
               )}
-            </Box>
-          </Box>
+            </div>
+          </div>
 
           <Box sx={{ marginBottom: 2 }}>
-          <Typography variant="caption">
-            The namespace UUID. Enter your custom UUID, or choose a wellknown
-            UUID
-          </Typography>
+            <Typography variant="caption">
+              The namespace UUID. Enter your custom UUID, or choose a wellknown
+              UUID
+            </Typography>
+          </Box>
+
+          <div className="mb-0.5 md:max-w-[750px]">
+            <TextField
+              label="Name"
+              variant="outlined"
+              InputProps={{ className: "!font-['Fira_Code'] !font-medium" }}
+              fullWidth
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+            />
+          </div>
+          <Box sx={{ marginBottom: 2 }}>
+            <Typography variant="caption">
+              Required. Name can be anything
+            </Typography>
           </Box>
         </>
       )}
