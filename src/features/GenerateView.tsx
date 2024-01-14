@@ -18,6 +18,7 @@ import { wasmCore } from "@/tunnel";
 export function GenerateView() {
   const [version, setVersion] = useState<string>("1");
   const [nsType, setNsType] = useState<"custom" | "wellknown">("custom");
+  const [invalidCustomNs, setInvalidCustomNs] = useState(false);
 
   const [wellknowns, setWellknowns] = useState<wasmCore.WellKnownUuid[]>([]);
 
@@ -29,8 +30,11 @@ export function GenerateView() {
   // const [uuid, setUuid] = useState<wasmCore.PartedUuid | null>(null);
   const [uuidStr, setUuidStr] = useState<string>("");
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     let uuid: wasmCore.PartedUuid | null = null;
+    setInvalidCustomNs(false);
+
+    await new Promise((resolve) => setTimeout(() => resolve(void 0), 0));
 
     if (versionInt === 1) {
       uuid = wasmCore.create_uuid_v1() ?? null;
@@ -43,7 +47,8 @@ export function GenerateView() {
       if (nsType === "custom") {
         let parsed = wasmCore.parse_uuid(namespace);
         if (parsed === undefined) {
-          alert("Failed to parse namespace");
+          // alert("Failed to parse namespace");
+          setInvalidCustomNs(true);
           return;
         }
 
@@ -150,11 +155,17 @@ export function GenerateView() {
                 <TextField
                   label="Namespace"
                   variant="outlined"
-                  // helperText="The namespace UUID. Enter your custom UUID, or choose a wellknown UUID"
+                  helperText={
+                    invalidCustomNs ? "Failed to parse this UUID" : undefined
+                  }
+                  error={!!invalidCustomNs}
                   InputProps={{ className: "!font-['Fira_Code'] !font-medium" }}
                   fullWidth
                   value={namespace}
-                  onChange={(event) => setNamespace(event.target.value)}
+                  onChange={(event) => {
+                    setNamespace(event.target.value);
+                    setInvalidCustomNs(false);
+                  }}
                 />
               ) : (
                 <Select
