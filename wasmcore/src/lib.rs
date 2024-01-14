@@ -1,13 +1,13 @@
-use wasm_bindgen::prelude::*;
-use uuidland::Uuid;
 use uuidland::inspect::UuidDetails;
-
+use uuidland::wellknown;
+use uuidland::Uuid;
+use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 #[derive(Clone, Copy)]
 pub struct PartedUuid {
     hi: u64,
-    lo: u64
+    lo: u64,
 }
 
 // #[wasm_bindgen]
@@ -27,7 +27,6 @@ impl PartedUuid {
     }
 }
 
-
 #[wasm_bindgen]
 pub fn create_uuid() -> PartedUuid {
     let uuid = uuidland::gen::v4();
@@ -36,11 +35,35 @@ pub fn create_uuid() -> PartedUuid {
 }
 
 #[wasm_bindgen]
-pub fn get_details(p_uuid: PartedUuid) -> UuidDetails {
-    p_uuid.into_uuid().details()
-}
-
-#[wasm_bindgen]
 pub fn format_uuid(p_uuid: PartedUuid) -> String {
     p_uuid.into_uuid().to_string_hex()
+}
+
+#[wasm_bindgen(getter_with_clone)]
+pub struct WellKnownUuid {
+    pub name: String,
+    pub uuid: PartedUuid,
+}
+
+
+#[wasm_bindgen]
+pub fn wellknown_list() -> Vec<WellKnownUuid> {
+    vec![
+        WellKnownUuid {
+            name: "NS_DNS".into(),
+            uuid: PartedUuid::from_uuid(&wellknown::NS_DNS),
+        },
+        WellKnownUuid {
+            name: "NS_URL".into(),
+            uuid: PartedUuid::from_uuid(&wellknown::NS_URL),
+        },
+        WellKnownUuid {
+            name: "NS_OID".into(),
+            uuid: PartedUuid::from_uuid(&wellknown::NS_OID),
+        },
+        WellKnownUuid {
+            name: "NS_X500".into(),
+            uuid: PartedUuid::from_uuid(&wellknown::NS_X500),
+        },
+    ]
 }
