@@ -1,13 +1,11 @@
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import {
-  Alert,
   Button,
   FormControl,
   IconButton,
   InputLabel,
   MenuItem,
   Select,
-  SelectChangeEvent,
   TextField,
   Tooltip,
   Typography,
@@ -57,7 +55,7 @@ export function GenerateView() {
       <Typography variant="h5" sx={{ marginBottom: 2 }}>
         Generate UUID
       </Typography>
-      <div className="mb-2 md:max-w-[250px]">
+      <div className="mb-4 md:max-w-[250px]">
         <FormControl fullWidth>
           <InputLabel id="demo-simple-select-label">Version</InputLabel>
           <Select
@@ -95,7 +93,7 @@ export function GenerateView() {
             Namespace
           </Typography>
 
-          <div className="mb-0.5 flex flex-col items-start gap-4 md:flex-row">
+          <div className="mb-0.5 flex flex-col md:items-start gap-4 md:flex-row">
             <FormControl className="shrink-0">
               <InputLabel>Input Type</InputLabel>
               <Select
@@ -138,6 +136,19 @@ export function GenerateView() {
             <Typography variant="caption">
               The namespace UUID. Enter your custom UUID, or choose a wellknown
               UUID
+              {nsType === "custom" && (
+                <>
+                  <br />
+                  The namespace must be a valid UUID in the format{" "}
+                  <Typography
+                    display="inline"
+                    variant="inherit"
+                    color="primary.main"
+                  >
+                    00000000-0000-0000-0000-000000000000
+                  </Typography>
+                </>
+              )}
             </Typography>
           </Box>
 
@@ -183,11 +194,10 @@ export function GenerateView() {
           }}
         >
           <div className="grid grid-cols-[1fr_auto] grid-rows-1">
-            <div className="col-[1/-1] row-[1/2] flex items-center justify-center">
-              <Typography variant="h4" fontFamily="Fira Code" fontWeight={700}>
-                {/*ffb82219-2be8-4961-8c83-2163e1b4b966*/}
+            <div className="col-[1/-1] row-[1/2] flex items-center justify-center pr-8 md:px-12">
+              <span className="font-['Fira_Code'] font-bold text-lg sm:text-xl md:text-2xl lg:text-3xl">
                 {uuidStr}
-              </Typography>
+              </span>
             </div>
             <div className="col-[2/3] row-[1/2] flex items-center justify-center">
               <Tooltip title="Copy to Clipboard">
