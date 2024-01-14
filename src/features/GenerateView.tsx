@@ -1,4 +1,5 @@
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import DoneIcon from "@mui/icons-material/Done";
 import {
   Button,
   FormControl,
@@ -18,7 +19,6 @@ import { wasmCore } from "@/tunnel";
 export function GenerateView() {
   const [version, setVersion] = useState<string>("1");
   const [nsType, setNsType] = useState<"custom" | "wellknown">("custom");
-  const [invalidCustomNs, setInvalidCustomNs] = useState(false);
 
   const [wellknowns, setWellknowns] = useState<wasmCore.WellKnownUuid[]>([]);
 
@@ -27,8 +27,10 @@ export function GenerateView() {
 
   const [name, setName] = useState<string>("");
 
-  // const [uuid, setUuid] = useState<wasmCore.PartedUuid | null>(null);
   const [uuidStr, setUuidStr] = useState<string>("");
+
+  const [copied, setCopied] = useState(false);
+  const [invalidCustomNs, setInvalidCustomNs] = useState(false);
 
   const handleGenerate = async () => {
     let uuid: wasmCore.PartedUuid | null = null;
@@ -259,8 +261,25 @@ export function GenerateView() {
               </span>
             </div>
             <div className="col-[2/3] row-[1/2] flex items-center justify-center">
-              <Tooltip title="Copy to Clipboard">
-                <IconButton>
+              <Tooltip
+                onOpen={() => setCopied(false)}
+                title={
+                  !copied ? (
+                    "Copy to Clipboard"
+                  ) : (
+                    <Typography variant="inherit" className="flex items-center gap-x-1">
+                      <DoneIcon fontSize="small" color="success" />
+                      Copied
+                    </Typography>
+                  )
+                }
+              >
+                <IconButton
+                  onClick={() => {
+                    navigator.clipboard.writeText(uuidStr);
+                    setCopied(true);
+                  }}
+                >
                   <ContentCopyIcon />
                 </IconButton>
               </Tooltip>
