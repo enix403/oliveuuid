@@ -26,14 +26,58 @@ export function GenerateView() {
 
   const [name, setName] = useState<string>("");
 
-  const [uuid, setUuid] = useState<wasmCore.PartedUuid | null>(null);
+  // const [uuid, setUuid] = useState<wasmCore.PartedUuid | null>(null);
   const [uuidStr, setUuidStr] = useState<string>("");
 
-  const handleGenerate = useCallback(() => {
-    let uuid = wasmCore.create_uuid();
-    setUuidStr(wasmCore.format_uuid(uuid));
-    setUuid(uuid);
-  }, []);
+  const handleGenerate = () => {
+    // let uuid = wasmCore.create_uuid();
+    // setUuidStr(wasmCore.format_uuid(uuid));
+    // setUuid(uuid);
+
+    let uuid: wasmCore.PartedUuid | null = null;
+
+    if (versionInt === 1) {
+      uuid = wasmCore.create_uuid_v1() ?? null;
+    } else if (versionInt === 4) {
+      uuid = wasmCore.create_uuid_v4();
+    } else {
+      // Version 3 or 5
+      let namespaceUuid: wasmCore.PartedUuid;
+
+      if (nsType === "custom") {
+        let parsed = wasmCore.parse_uuid(namespace);
+        if (parsed === undefined) {
+          alert("Failed to parse namespace");
+          return;
+        }
+
+        namespaceUuid = parsed;
+      } else {
+        let selectedWellKnown = wellknowns.find(
+          (wk) => wk.name === wellknownUuid
+        );
+        if (selectedWellKnown === undefined) {
+          alert("Invalid namespace");
+          return;
+        }
+
+        namespaceUuid = selectedWellKnown.uuid;
+      }
+
+      // console.log(wasmCore.format_uuid(namespaceUuid));
+
+      if (versionInt === 3)
+        //
+        uuid = wasmCore.create_uuid_v3(name, namespaceUuid);
+      else if (versionInt === 5)
+        //
+        uuid = wasmCore.create_uuid_v5(name, namespaceUuid);
+    }
+
+    if (uuid) {
+      setUuidStr(wasmCore.format_uuid(uuid));
+    }
+  };
 
   useEffect(() => {
     let ll = wasmCore.wellknown_list();
@@ -93,7 +137,7 @@ export function GenerateView() {
             Namespace
           </Typography>
 
-          <div className="mb-0.5 flex flex-col md:items-start gap-4 md:flex-row">
+          <div className="mb-0.5 flex flex-col gap-4 md:flex-row md:items-start">
             <FormControl className="shrink-0">
               <InputLabel>Input Type</InputLabel>
               <Select
@@ -181,7 +225,7 @@ export function GenerateView() {
         </Button>
       )}
 
-      {uuid && (
+      {uuidStr && (
         <Box
           sx={{
             width: "100%",
@@ -195,7 +239,7 @@ export function GenerateView() {
         >
           <div className="grid grid-cols-[1fr_auto] grid-rows-1">
             <div className="col-[1/-1] row-[1/2] flex items-center justify-center pr-8 md:px-12">
-              <span className="font-['Fira_Code'] font-bold text-lg sm:text-xl md:text-2xl lg:text-3xl">
+              <span className="font-['Fira_Code'] text-lg font-bold sm:text-xl md:text-2xl lg:text-3xl">
                 {uuidStr}
               </span>
             </div>
