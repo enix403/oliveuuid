@@ -30,10 +30,6 @@ export function GenerateView() {
   const [uuidStr, setUuidStr] = useState<string>("");
 
   const handleGenerate = () => {
-    // let uuid = wasmCore.create_uuid();
-    // setUuidStr(wasmCore.format_uuid(uuid));
-    // setUuid(uuid);
-
     let uuid: wasmCore.PartedUuid | null = null;
 
     if (versionInt === 1) {
@@ -196,9 +192,17 @@ export function GenerateView() {
             </Typography>
           </Box>
 
+          <Typography
+            variant="body1"
+            className="!font-bold"
+            sx={{ marginBottom: 2 }}
+          >
+            Name
+          </Typography>
+
           <div className="mb-0.5 md:max-w-[750px]">
             <TextField
-              label="Name"
+              label="Enter Name"
               variant="outlined"
               InputProps={{ className: "!font-['Fira_Code'] !font-medium" }}
               fullWidth
