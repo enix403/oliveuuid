@@ -2,14 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: "Mona Sans";
-  src: url("/Mona-Sans.woff2") format("woff2 supports variations"),
-    url("/Mona-Sans.woff2") format("woff2-variations");
-  font-weight: 200 900;
-  font-stretch: 75% 125%;
-}
-
 html {
   font-size: 14px;
 }
@@ -24,11 +16,6 @@ body {
 
 body {
   -webkit-font-smoothing: antialiased;
-  /* font-family: "Inter", sans-serif; */
-  font-family: "Mona Sans";
-
-  /* color: #000; */
-  /* background-color: #f8f7f4; */
 }
 
 #root {

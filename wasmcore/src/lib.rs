@@ -1,3 +1,4 @@
+use rand::prelude::*;
 use uuidland::wellknown;
 use uuidland::Uuid;
 use wasm_bindgen::prelude::*;
@@ -59,6 +60,17 @@ pub fn create_uuid_v5(name: &str, namespace: PartedUuid) -> PartedUuid {
 }
 
 #[wasm_bindgen]
+pub fn random_uuid_str() -> String {
+    let v1 = if rand::random() {
+        uuidland::gen::v1().ok()
+    } else {
+        None
+    };
+
+    v1.unwrap_or_else(|| uuidland::gen::v4()).to_string_hex()
+}
+
+#[wasm_bindgen]
 pub fn format_uuid(p_uuid: PartedUuid) -> String {
     p_uuid.into_uuid().to_string_hex()
 }
@@ -78,19 +90,19 @@ pub struct WellKnownUuid {
 pub fn wellknown_list() -> Vec<WellKnownUuid> {
     vec![
         WellKnownUuid {
-            name: "NS_DNS".into(),
+            name: "NS:DNS".into(),
             uuid: PartedUuid::from_uuid(wellknown::NS_DNS),
         },
         WellKnownUuid {
-            name: "NS_URL".into(),
+            name: "NS:URL".into(),
             uuid: PartedUuid::from_uuid(wellknown::NS_URL),
         },
         WellKnownUuid {
-            name: "NS_OID".into(),
+            name: "NS:OID".into(),
             uuid: PartedUuid::from_uuid(wellknown::NS_OID),
         },
         WellKnownUuid {
-            name: "NS_X500".into(),
+            name: "NS:X500".into(),
             uuid: PartedUuid::from_uuid(wellknown::NS_X500),
         },
     ]

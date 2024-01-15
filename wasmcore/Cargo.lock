@@ -136,6 +136,7 @@ name = "oliveuuid"
 version = "0.1.0"
 dependencies = [
  "getrandom",
+ "rand",
  "uuidland",
  "wasm-bindgen",
  "wasm-bindgen-test",

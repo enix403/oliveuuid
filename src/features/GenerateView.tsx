@@ -67,8 +67,6 @@ export function GenerateView() {
         namespaceUuid = selectedWellKnown.uuid;
       }
 
-      // console.log(wasmCore.format_uuid(namespaceUuid));
-
       if (versionInt === 3)
         //
         uuid = wasmCore.create_uuid_v3(name, namespaceUuid);
@@ -81,6 +79,10 @@ export function GenerateView() {
       setUuidStr(wasmCore.format_uuid(uuid));
     }
   };
+
+  const fillRandomNamespace = useCallback(() => {
+    setNamespace(wasmCore.random_uuid_str());
+  }, []);
 
   useEffect(() => {
     let ll = wasmCore.wellknown_list();
@@ -183,6 +185,17 @@ export function GenerateView() {
                 </Select>
               )}
             </div>
+            {nsType === "custom" && (
+              <Button
+                color="secondary"
+                variant="outlined"
+                size="large"
+                sx={{ py: 1.8 }}
+                onClick={fillRandomNamespace}
+              >
+                Fill Random
+              </Button>
+            )}
           </div>
 
           <Box sx={{ marginBottom: 2 }}>
@@ -267,7 +280,10 @@ export function GenerateView() {
                   !copied ? (
                     "Copy to Clipboard"
                   ) : (
-                    <Typography variant="inherit" className="flex items-center gap-x-1">
+                    <Typography
+                      variant="inherit"
+                      className="flex items-center gap-x-1"
+                    >
                       <DoneIcon fontSize="small" color="success" />
                       Copied
                     </Typography>
