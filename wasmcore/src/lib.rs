@@ -1,4 +1,4 @@
-use rand::prelude::*;
+use uuidland::inspect::{TimeSpec, UuidDetails};
 use uuidland::wellknown;
 use uuidland::Uuid;
 use wasm_bindgen::prelude::*;
@@ -106,4 +106,30 @@ pub fn wellknown_list() -> Vec<WellKnownUuid> {
             uuid: PartedUuid::from_uuid(wellknown::NS_X500),
         },
     ]
+}
+
+/* ===================================== */
+// DECODING
+/* ===================================== */
+
+#[wasm_bindgen(getter_with_clone)]
+pub struct DecodeResult {
+    pub strval: String,
+    pub intval: String,
+    pub details: UuidDetails,
+    pub timespec: TimeSpec,
+}
+
+#[wasm_bindgen]
+pub fn decode_uuid(s: &str) -> Option<DecodeResult> {
+    let uuid = Uuid::parse(s).ok()?;
+    let details = uuid.details();
+    let timespec = details.unix_time();
+
+    Some(DecodeResult {
+        strval: uuid.to_string_hex(),
+        intval: uuid.value().to_string(),
+        details,
+        timespec,
+    })
 }

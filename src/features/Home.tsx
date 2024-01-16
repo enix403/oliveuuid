@@ -1,23 +1,15 @@
 import {
   Tab,
   Tabs,
-  Typography,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { GenerateView } from "./GenerateView";
-
-function DecodeView() {
-  return (
-    <>
-      <Typography variant="h6">Decode UUID</Typography>
-    </>
-  );
-}
+import { DecodeView } from "./DecodeView";
 
 export function Home() {
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeTab, setActiveTab] = useState(1);
 
   const handleChange = (_event, tab: number) => {
     setActiveTab(tab);

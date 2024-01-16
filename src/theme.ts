@@ -45,8 +45,14 @@ export const theme = createTheme({
       A700: "#616161",
     },
     divider: "rgba(59, 74, 89, 0.2)",
-
   },
+  components: {
+    MuiTableCell: {
+      defaultProps: {
+        sx: { fontSize: 16 }
+      }
+    }
+  }
 });
 
 /*
