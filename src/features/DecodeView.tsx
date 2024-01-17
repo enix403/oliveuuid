@@ -83,7 +83,7 @@ function formatTime(spec: wasmCore.TimeSpec) {
   let d = new Date(Number(spec.seconds) * 1000);
 
   let year = d.getUTCFullYear().toString().padStart(4, "0");
-  let month = d.getUTCMonth().toString().padStart(2, "0");
+  let month = (d.getUTCMonth() + 1).toString().padStart(2, "0");
   let date = d.getUTCDate().toString().padStart(2, "0");
   let hours = d.getUTCHours().toString().padStart(2, "0");
   let mins = d.getUTCMinutes().toString().padStart(2, "0");
