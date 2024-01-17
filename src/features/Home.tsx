@@ -9,7 +9,7 @@ import { GenerateView } from "./GenerateView";
 import { DecodeView } from "./DecodeView";
 
 export function Home() {
-  const [activeTab, setActiveTab] = useState(1);
+  const [activeTab, setActiveTab] = useState(0);
 
   const handleChange = (_event, tab: number) => {
     setActiveTab(tab);
