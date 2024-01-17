@@ -12,11 +12,11 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 
 type DecodeRow = {
   name: string;
-  value: string | number;
+  value: ReactNode;
 };
 
 function getVersionString(version: number) {
@@ -27,7 +27,7 @@ function getVersionString(version: number) {
     5: "5 (name based, SHA-1)",
   };
 
-  return verstrs[version] || `${version} (Unknown)`;
+  return verstrs[version] || `${version} (unknown)`;
 }
 
 function getVariantString(variantOctet: number) {
@@ -39,54 +39,52 @@ function getVariantString(variantOctet: number) {
   // e - f | 111x | reserved (future use)
 
   if (high <= 7) return "0xxx - reserved (NCS backward compatible)";
-  if (high <= 12) return "10xx - DCE 1.1, ISO/IEC 11578:1996";
-  if (high <= 14) return "110x - reserved (Microsoft GUID)";
+  if (high <= 11) return "10xx - DCE 1.1, ISO/IEC 11578:1996";
+  if (high <= 13) return "110x - reserved (Microsoft GUID)";
   else return "111x - reserved (future use)";
 }
-
-// const rows: DecodeRow[] = [
-//   {
-//     name: "Standard String Format",
-//     value: "35aea681-b491-11ee-8c16-925659db43db",
-//   },
-//   {
-//     name: "Single Integer Value",
-//     value: "71355920586295452480991953809030464475",
-//   },
-//   { name: "Version", value: "1 (time and node based)" },
-//   { name: "Variant", value: "DCE 1.1, ISO/IEC 11578:1996" },
-//   { name: "Contents - Time", value: "2024-01-16 17:03:45.896000.1 UTC" },
-//   { name: "Contents - Clock", value: "3094" },
-//   { name: "Contents - Node", value: "92:56:59:db:43:db (local unicast)" },
-// ];
 
 function toBytes(number: bigint | number, numBytes: number): number[] {
   let bytes: number[] = [];
 
   let mask: number | bigint = 0xff;
   let shift: number | bigint = 8;
-  if (typeof number === "bigint")
-  {
+  if (typeof number === "bigint") {
     mask = BigInt(mask);
     shift = BigInt(shift);
   }
-
 
   for (let i = 0; i < numBytes; ++i) {
     // @ts-ignore
     let byte = Number(number & mask);
     // @ts-ignore
     number = number >> shift;
-    bytes.push((byte));
+    bytes.push(byte);
   }
 
   return bytes.reverse();
 }
 
+function formatTime(spec: wasmCore.TimeSpec) {
+  let d = new Date(Number(spec.seconds) * 1000);
+
+  let year = d.getUTCFullYear().toString().padStart(4, "0");
+  let month = d.getUTCMonth().toString().padStart(2, "0");
+  let date = d.getUTCDate().toString().padStart(2, "0");
+  let hours = d.getUTCHours().toString().padStart(2, "0");
+  let mins = d.getUTCMinutes().toString().padStart(2, "0");
+  let secs = d.getUTCSeconds().toString().padStart(2, "0");
+
+  let microseconds = spec.microseconds.toString().padStart(6, "0");
+  let nanoseconds = spec.nanoseconds / 100;
+
+  return `${year}-${month}-${date}T${hours}:${mins}:${secs}.${microseconds}.${nanoseconds}Z`;
+}
+
 function formatNode(number: bigint) {
   let bytes = toBytes(number, 6);
 
-  let hexParts = bytes.map((byte) => byte.toString(16));
+  let hexParts = bytes.map((byte) => byte.toString(16).padStart(2, "0"));
   let nodeStr = hexParts.join(":");
 
   let octet = bytes[0];
@@ -95,6 +93,54 @@ function formatNode(number: bigint) {
   let cast = octet & 0x01 ? "multicast" : "unicast";
 
   return `${nodeStr} (${range} ${cast})`;
+}
+
+function createContentRows(result: wasmCore.DecodeResult): DecodeRow[] {
+  let { version, variant } = result.details;
+
+  let vhigh = variant >> 4;
+
+  let rfcVariant = vhigh >= 8 && vhigh <= 11;
+
+  if (version === 1 && rfcVariant) {
+    return [
+      { name: "Contents - Clock", value: result.details.clock_seq },
+      { name: "Contents - Time", value: formatTime(result.timespec) },
+      { name: "Contents - Node", value: formatNode(result.details.node) },
+    ];
+  }
+
+  let { hi, lo } = result.p_uuid;
+  let contentBytes = [...toBytes(hi, 8), ...toBytes(lo, 8)];
+
+  let contentStr = contentBytes
+    .map((byte) => byte.toString(16).toUpperCase().padStart(2, "0"))
+    .join(":");
+
+  let debugInfo: string;
+  if (!rfcVariant) {
+    debugInfo = "not decipherable: unknown UUID variant";
+  } else if (version === 3) {
+    debugInfo = "not decipherable: MD5 message digest only";
+  } else if (version === 4) {
+    debugInfo = "no semantics: random data only";
+  } else if (version === 5) {
+    debugInfo = "not decipherable: truncated SHA-1 message digest only";
+  } else {
+    debugInfo = "not decipherable: unknown UUID version";
+  }
+
+  return [
+    {
+      name: "Contents",
+      value: (
+        <>
+          {contentStr}
+          <br />({debugInfo})
+        </>
+      ),
+    },
+  ];
 }
 
 export function DecodeView() {
@@ -119,8 +165,10 @@ export function DecodeView() {
       { name: "Single Integer Value", value: result.intval },
       { name: "Version", value: getVersionString(result.details.version) },
       { name: "Variant", value: getVariantString(result.details.variant) },
-      { name: "Contents - Clock", value: result.details.clock_seq },
-      { name: "Contents - Node", value: formatNode(result.details.node) },
+      // { name: "Contents - Clock", value: result.details.clock_seq },
+      // { name: "Contents - Time", value: formatTime(result.timespec) },
+      // { name: "Contents - Node", value: formatNode(result.details.node) },
+      ...createContentRows(result),
     ]);
 
     result.free();
@@ -167,7 +215,7 @@ export function DecodeView() {
         </Button>
       </form>
 
-      <TableContainer sx={{ maxWidth: 800 }} component={Paper}>
+      <TableContainer sx={{ width: 900 }} component={Paper}>
         <Table size="medium">
           <TableBody>
             {rows.map((row, index) => (

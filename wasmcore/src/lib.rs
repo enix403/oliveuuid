@@ -6,8 +6,8 @@ use wasm_bindgen::prelude::*;
 #[wasm_bindgen]
 #[derive(Clone, Copy)]
 pub struct PartedUuid {
-    hi: u64,
-    lo: u64,
+    pub hi: u64,
+    pub lo: u64,
 }
 
 // #[wasm_bindgen]
@@ -114,6 +114,7 @@ pub fn wellknown_list() -> Vec<WellKnownUuid> {
 
 #[wasm_bindgen(getter_with_clone)]
 pub struct DecodeResult {
+    pub p_uuid: PartedUuid,
     pub strval: String,
     pub intval: String,
     pub details: UuidDetails,
@@ -129,6 +130,7 @@ pub fn decode_uuid(s: &str) -> Option<DecodeResult> {
     Some(DecodeResult {
         strval: uuid.to_string_hex(),
         intval: uuid.value().to_string(),
+        p_uuid: PartedUuid::from_uuid(uuid),
         details,
         timespec,
     })
