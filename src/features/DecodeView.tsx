@@ -60,17 +60,58 @@ function getVariantString(variantOctet: number) {
 //   { name: "Contents - Node", value: "92:56:59:db:43:db (local unicast)" },
 // ];
 
+function toBytes(number: bigint | number, numBytes: number): number[] {
+  let bytes: number[] = [];
+
+  let mask: number | bigint = 0xff;
+  let shift: number | bigint = 8;
+  if (typeof number === "bigint")
+  {
+    mask = BigInt(mask);
+    shift = BigInt(shift);
+  }
+
+
+  for (let i = 0; i < numBytes; ++i) {
+    // @ts-ignore
+    let byte = Number(number & mask);
+    // @ts-ignore
+    number = number >> shift;
+    bytes.push((byte));
+  }
+
+  return bytes.reverse();
+}
+
+function formatNode(number: bigint) {
+  let bytes = toBytes(number, 6);
+
+  let hexParts = bytes.map((byte) => byte.toString(16));
+  let nodeStr = hexParts.join(":");
+
+  let octet = bytes[0];
+
+  let range = octet & 0x02 ? "local" : "global";
+  let cast = octet & 0x01 ? "multicast" : "unicast";
+
+  return `${nodeStr} (${range} ${cast})`;
+}
+
 export function DecodeView() {
   const [uuid, setUuid] = useState("");
-  // const [invalidUuid, setInvalidUuid] = useState(false);
+  const [invalidUuid, setInvalidUuid] = useState(false);
   let [rows, setRows] = useState<DecodeRow[]>([]);
 
   function handleDecode(event: React.SyntheticEvent) {
     event.preventDefault();
     event.stopPropagation();
+
     let result = wasmCore.decode_uuid(uuid);
 
-    if (result === undefined) return;
+    if (result === undefined) {
+      setInvalidUuid(true);
+      return;
+    }
 
     setRows([
       //
@@ -78,9 +119,11 @@ export function DecodeView() {
       { name: "Single Integer Value", value: result.intval },
       { name: "Version", value: getVersionString(result.details.version) },
       { name: "Variant", value: getVariantString(result.details.variant) },
+      { name: "Contents - Clock", value: result.details.clock_seq },
+      { name: "Contents - Node", value: formatNode(result.details.node) },
     ]);
 
-    return;
+    result.free();
   }
 
   return (
@@ -94,14 +137,14 @@ export function DecodeView() {
           <TextField
             label="Enter UUID"
             variant="outlined"
-            // helperText={invalidCustomNs ? "Failed to parse this UUID" : undefined}
-            // error={!!invalidCustomNs}
+            helperText={invalidUuid ? "Failed to parse this UUID" : undefined}
+            error={!!invalidUuid}
             InputProps={{ className: "!font-['Fira_Code'] !font-medium" }}
             fullWidth
             value={uuid}
             onChange={(event) => {
               setUuid(event.target.value);
-              // setInvalidUuid(false);
+              setInvalidUuid(false);
             }}
           />
         </div>
@@ -127,12 +170,14 @@ export function DecodeView() {
       <TableContainer sx={{ maxWidth: 800 }} component={Paper}>
         <Table size="medium">
           <TableBody>
-            {rows.map((row) => (
-              <TableRow>
+            {rows.map((row, index) => (
+              <TableRow key={index}>
                 <TableCell align="right" className="!font-bold">
-                  {row.name}
+                  <span>{row.name}</span>
                 </TableCell>
-                <TableCell>{row.value}</TableCell>
+                <TableCell>
+                  <span>{row.value}</span>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
