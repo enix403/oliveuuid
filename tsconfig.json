@@ -10,6 +10,7 @@
       "@/*": ["./*"],
       "@wasmcore/*": ["../wasmcore/*"]
     },
+    "allowJs": true,
 
     /* Bundler mode */
     "moduleResolution": "bundler",

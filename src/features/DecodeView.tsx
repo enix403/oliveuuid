@@ -19,15 +19,29 @@ type DecodeRow = {
   value: ReactNode;
 };
 
+function mute(content: string): ReactNode {
+  return (
+    <span color="gray" className="ml-1 italic text-[rgb(158,150,137)]">
+      {content}
+    </span>
+  );
+}
+
 function getVersionString(version: number) {
   let verstrs = {
-    1: "1 (time and node based)",
-    3: "3 (name based, MD5)",
-    4: "4 (random data based)",
-    5: "5 (name based, SHA-1)",
+    1: "(time and node based)",
+    3: "(name based, MD5)",
+    4: "(random data based)",
+    5: "(name based, SHA-1)",
   };
 
-  return verstrs[version] || `${version} (unknown)`;
+  let versionStr = verstrs[version] || "(unknown)";
+
+  return (
+    <>
+      {version} {mute(versionStr)}
+    </>
+  );
 }
 
 function getVariantString(variantOctet: number) {
@@ -92,7 +106,13 @@ function formatNode(number: bigint) {
   let range = octet & 0x02 ? "local" : "global";
   let cast = octet & 0x01 ? "multicast" : "unicast";
 
-  return `${nodeStr} (${range} ${cast})`;
+  let muted = `(${range} ${cast})`;
+
+  return (
+    <>
+      {nodeStr} {mute(muted)}
+    </>
+  );
 }
 
 function createContentRows(result: wasmCore.DecodeResult): DecodeRow[] {
@@ -130,13 +150,16 @@ function createContentRows(result: wasmCore.DecodeResult): DecodeRow[] {
     debugInfo = "not decipherable: unknown UUID version";
   }
 
+  debugInfo = `(${debugInfo})`;
+
   return [
     {
       name: "Contents",
       value: (
         <>
           {contentStr}
-          <br />({debugInfo})
+          <br />
+          {mute(debugInfo)}
         </>
       ),
     },
@@ -165,9 +188,6 @@ export function DecodeView() {
       { name: "Single Integer Value", value: result.intval },
       { name: "Version", value: getVersionString(result.details.version) },
       { name: "Variant", value: getVariantString(result.details.variant) },
-      // { name: "Contents - Clock", value: result.details.clock_seq },
-      // { name: "Contents - Time", value: formatTime(result.timespec) },
-      // { name: "Contents - Node", value: formatNode(result.details.node) },
       ...createContentRows(result),
     ]);
 
@@ -215,12 +235,12 @@ export function DecodeView() {
         </Button>
       </form>
 
-      <TableContainer sx={{ width: 900 }} component={Paper}>
+      <TableContainer sx={{ maxWidth: 900 }} component={Paper}>
         <Table size="medium">
           <TableBody>
             {rows.map((row, index) => (
               <TableRow key={index}>
-                <TableCell align="right" className="!font-bold">
+                <TableCell align="right" className="!font-bold md:whitespace-nowrap !pl-8 max-md:w-[1px]">
                   <span>{row.name}</span>
                 </TableCell>
                 <TableCell>
